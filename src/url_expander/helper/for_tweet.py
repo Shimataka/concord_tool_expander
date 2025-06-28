@@ -7,11 +7,6 @@ from discord.channel import TextChannel, VoiceChannel
 from discord.ext.commands import Bot  # type: ignore [reportMissingTypeStubs]
 
 regex_message_url = r"(?!<)https://(twitter|x).com(?!>)/(?P<body>\S+)"
-regex_extra_url = (
-    r"\?base_aid=(?P<base_author_id>[0-9]{17,20})"
-    r"&aid=(?P<author_id>[0-9]{17,20})"
-    r"&extra=(?P<extra_messages>(|[0-9,]+))"
-)
 DELETE_REACTION_EMOJI = "\U0001f5d1"
 WAITING_TIME = 1
 
