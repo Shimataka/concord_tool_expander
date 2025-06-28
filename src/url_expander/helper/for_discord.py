@@ -97,6 +97,8 @@ class DiscordUrlExpander:
                 sent_embed_message = await message.channel.send(embed=embed)
                 sent_messages.append(sent_embed_message)
 
+            if len(sent_messages) == 0:
+                continue
             top_message = sent_messages[0]
             await top_message.add_reaction(DELETE_REACTION_EMOJI)
             top_embed = top_message.embeds[0]
