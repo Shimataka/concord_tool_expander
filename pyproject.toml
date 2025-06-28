@@ -1,7 +1,7 @@
 [project]
 name = "url_expander"
 version = "0.1.0"
-description = "Add your description here"
+description = "Discord bot to expand message URLs from Discord and X(Twitter)."
 readme = "README.md"
 authors = [
     { name = "shimataka_cursor", email = "40866638+Shimataka@users.noreply.github.com" }
@@ -51,7 +51,8 @@ files = [
     "tests/**/*.py",
 ]
 mypy_path = [
-    ".venv/bin/mypy",
+    "src",
+    "tests",
 ]
 exclude = [
     "**/local/**/*.py",
@@ -152,7 +153,7 @@ format.quote-style = "double"
 "tests/**/*.py" = ["S101"]
 
 [tool.pytest.ini_options]
-addopts = "-vv --tb=short -s --cov=./tests --cov-report html"
+addopts = "-vv --tb=short -s --cov=src/url_expander --cov-report html"
 python_files = ["test_*.py"]
 python_classes = ["Test*"]
 python_functions = ["test_*"]
