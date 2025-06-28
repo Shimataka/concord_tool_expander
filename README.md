@@ -1,31 +1,107 @@
-# example_new_ai_repo
+# URL Expander
 
-## Description
+Discordボット用のURL展開ツール。DiscordのメッセージURLとX(Twitter)のURLを自動的に展開してembedを作成します。
 
-このリポジトリは、GitHubにおける開発環境のセットアップを容易にするためのテンプレートです。
-このプロジェクトは、バージョン管理と協力作業のための基本的なテンプレートとして機能します。
+## 機能
 
-## How to use
+### Discord URL Expander
 
-1. このリポジトリからテンプレートを作成( `Use this template` ボタンから)、
-または `.git` 以外の中身を新しいリポジトリにコピーしてください。
-1. 目的に合わせて調整してください。
-    - Pythonの場合、[Python開発環境の場合](.settings/templates/python/template.md)を参照してください。
-    - Rustの場合、[Rust開発環境の場合](.settings/templates/rust/template.md)を参照してください。
-    - Gitによるバージョン管理を行う場合、[Git環境の場合](.settings/templates/git/template.md)を参照してください。
-    - その他の言語は考慮されていません。希望がある場合はissueにてお願いします。
+- DiscordのメッセージURLを検出して自動的にembedを作成
+- メッセージの内容、添付ファイル、既存のembedを展開
+- 🗑️リアクションで投稿を削除可能
 
-## Technology stack
+### Twitter URL Expander
 
-| カテゴリー | ツール |
-| --- | --- |
-| IDE設定 | [EditorConfig](https://editorconfig.org/) |
-| CI/CD | [GitHub Actions](https://github.com/features/actions) |
-| コードレビュー | [reviewdog](https://github.com/reviewdog/reviewdog) |
-| リリース | [semantic-release](https://semantic-release.gitbook.io/semantic-release/) |
-| 依存性更新 | [Dependabot](https://docs.github.com/ja/code-security/dependabot) |
-| Git commit messages | [commitlint](https://commitlint.js.org/) |
-| Credentials | [Secretlint](https://github.com/secretlint/secretlint) |
-| Markdown | [markdownlint-cli](https://github.com/igorshubovych/markdownlint-cli) |
-| YAML | [yamllint](https://yamllint.readthedocs.io/) |
-| GitHub Actions Workflow | [actionlint](https://github.com/rhysd/actionlint) |
+- X(Twitter)のURLをvxtwitter.comに変換してembedを作成
+- 🗑️リアクションで投稿を削除可能
+
+## インストール
+
+```bash
+# 依存関係のインストール
+pip install git+https://github.com/Shimataka/concord_tool_expander.git
+```
+
+## 使用方法
+
+### 基本的な使用方法
+
+```python
+import asyncio
+from pathlib import Path
+from concord import Agent
+
+# Agentの初期化
+config_and_log_dirpath = Path(__file__).parent
+agent = Agent(utils_dirpath=config_and_log_dirpath)
+asyncio.run(agent.run())
+```
+
+### ツールの設定
+
+`tools/expander/__tool__.py`を作成して以下のように設定：
+
+```python
+from concord import Agent
+from discord import Message, RawReactionActionEvent
+from discord.ext.commands import Cog
+
+from url_expander import DiscordUrlExpander, TwitterUrlExpander
+
+class ExpanderTools(Cog):
+    def __init__(self, agent: Agent) -> None:
+        self.agent = agent
+        self.discord_expander = DiscordUrlExpander(agent)
+        self.twitter_expander = TwitterUrlExpander(agent)
+
+    @Cog.listener()
+    async def on_message(self, message: Message) -> None:
+        await self.discord_expander.on_message(message)
+        await self.twitter_expander.on_message(message)
+
+    @Cog.listener()
+    async def on_raw_reaction_add(self, payload: RawReactionActionEvent) -> None:
+        await self.discord_expander.on_raw_reaction_add(payload)
+        await self.twitter_expander.on_raw_reaction_add(payload)
+```
+
+### 設定ファイル
+
+`configs/bot.ini`でボットの設定：
+
+```ini
+[Discord.Bot]
+name = YourBotName
+description = Your bot description
+
+[Discord.API]
+token = YOUR_BOT_TOKEN
+
+[Discord.DefaultChannel]
+dev_channel = CHANNEL_ID
+log_channel = CHANNEL_ID
+```
+
+## 実行例
+
+```bash
+# 基本的な使用例
+python examples/ex00_basic_usage/main.py --bot-name testbot --tool-directory-paths tools
+```
+
+## 対応URL形式
+
+### Discord
+
+- `https://discord.com/channels/<guild>/<channel>/<message>`
+- `https://ptb.discord.com/channels/<guild>/<channel>/<message>`
+- `https://canary.discord.com/channels/<guild>/<channel>/<message>`
+
+### X(Twitter)
+
+- `https://twitter.com/<body>`
+- `https://x.com/<body>`
+
+## ライセンス
+
+このプロジェクトはMITライセンスの下で公開されています。
