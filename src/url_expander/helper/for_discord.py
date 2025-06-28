@@ -9,11 +9,6 @@ regex_message_url = (
     r"(?!<)https://(ptb.|canary.)?discord(app)?.com/"
     r"channels/(?P<guild>[0-9]{17,20})/(?P<channel>[0-9]{17,20})/(?P<message>[0-9]{17,20})(?!>)"
 )
-regex_extra_url = (
-    r"\?base_aid=(?P<base_author_id>[0-9]{17,20})"
-    r"&aid=(?P<author_id>[0-9]{17,20})"
-    r"&extra=(?P<extra_messages>(|[0-9,]+))"
-)
 DELETE_REACTION_EMOJI = "\U0001f5d1"
 
 
@@ -71,7 +66,6 @@ class DiscordUrlExpander:
             return
         if payload.user_id == bot.user.id:  # user who added emoji is bot
             return
-
         channel = bot.get_channel(payload.channel_id)
         if isinstance(channel, (TextChannel, VoiceChannel, Thread)):
             message = await channel.fetch_message(payload.message_id)
