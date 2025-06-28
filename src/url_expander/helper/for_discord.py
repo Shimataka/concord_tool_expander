@@ -123,8 +123,8 @@ class DiscordUrlExpander:
             channel = message.guild.get_channel_or_thread(int(ids["channel"]))
             if not isinstance(channel, (TextChannel, VoiceChannel, Thread)):
                 continue
-            message = await channel.fetch_message(int(ids["message"]))
-            messages.append(message)
+            fetched_message = await channel.fetch_message(int(ids["message"]))
+            messages.append(fetched_message)
         return messages
 
 
